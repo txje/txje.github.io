@@ -9,15 +9,17 @@ function IconGenerator() {
     console.log("ico.js: generating icons...");
     
     var renderIcon = function(ico) {
+        var mult = ico["retina"] ? 2 : 1;
         var can = document.createElement("canvas");
-        can.setAttribute('width', ico.width);
-        can.setAttribute('height', ico.height);
+        // modified HTML attributes
+        can.setAttribute('width', ico.width * mult);
+        can.setAttribute('height', ico.height * mult);
         
         var ctx = can.getContext("2d");
         ctx.lineWidth = 0;
         for(var command in ico) {
             if(command == "lineWidth") {
-                ctx.lineWidth = ico["lineWidth"];
+                ctx.lineWidth = ico["lineWidth"] * mult;
             }
             else if(command == "lineColor") {
                 ctx.strokeStyle = ico["lineColor"];
@@ -30,7 +32,7 @@ function IconGenerator() {
                 var original_width = ico["path"]["width"];
                 var original_height = ico["path"]["height"];
                 // do not skew image if dimensions don't agree
-                var scale = Math.min(ico.width/original_width, ico.height/original_height);
+                var scale = Math.min(ico.width/original_width*mult, ico.height/original_height*mult);
                 var sp = new svgpath(svg, scale);
                 sp.draw(ctx);
             }
@@ -66,7 +68,7 @@ function IconGenerator() {
     }
     var ss = document.styleSheets[0]; // get first stylesheet
     for(var i in icons) {
-        ss.insertRule(".icon-" + i + " { width: " + icons[i][1] + "px; height: " + icons[i][2] + "px; background:url('" + icons[i][0] + "'); background-repeat: none; display:inline-block; }", 0);
+        ss.insertRule(".icon-" + i + " { width: " + icons[i][1] + "px; height: " + icons[i][2] + "px; background:url('" + icons[i][0] + "');" + (newIcon["retina"] ? " background-size: " + icons[i][1] + "px " + icons[i][2] + "px;" : "") + " background-repeat: none; display:inline-block; }", 0);
     }
 }
 
